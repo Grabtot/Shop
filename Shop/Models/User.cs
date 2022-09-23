@@ -10,14 +10,24 @@
         public string Phone { get; private set; }
         public decimal Balance { get; private set; }
         public decimal MoneySpent { get; private set; }
-        public IEnumerable<Product> Cart { get; private set; }
-        public IEnumerable<Product> History { get; private set; }
+        public List<Product> Cart { get; private set; }
+        public List<Product> History { get; private set; }
 
         private User()
         {
             Balance = 100;
             MoneySpent = 0;
             UserId = Guid.NewGuid();
+            Cart = new List<Product>();
+            History = new List<Product>();
+
+            Name = string.Empty;
+            Email = string.Empty;
+            Phone = string.Empty;
+            Password = string.Empty;
         }
+
+
+
     }
 }
