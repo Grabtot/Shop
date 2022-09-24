@@ -1,4 +1,6 @@
-﻿namespace Shop.Models
+﻿using Shop.Models;
+
+namespace Shop.Data
 {
     public class UsersCart
     {

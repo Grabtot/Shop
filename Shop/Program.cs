@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Shop.Models;
+using Shop.Data;
 
 namespace Shop
 {

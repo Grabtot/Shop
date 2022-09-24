@@ -1,4 +1,6 @@
-﻿namespace Shop.Models
+﻿using Shop.Data;
+
+namespace Shop.Models
 {
     public class User
     {
