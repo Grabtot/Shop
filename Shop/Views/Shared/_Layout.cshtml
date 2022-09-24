@@ -26,6 +26,7 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Details">@(Context.Session.GetString("userName") ?? "User")</a>
                 </div>
             </div>
         </nav>
