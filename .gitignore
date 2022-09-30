@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 /Shop/Migrations
 /Shop/wwwroot/lib
+/Shop/Properties/ServiceDependencies/GrabtotShop

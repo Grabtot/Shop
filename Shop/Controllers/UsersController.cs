@@ -1,21 +1,22 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Shop.Data;
+using Shop.Filters;
 using Shop.Models;
 using Shop.ViewModels;
+using SessionExtensions = Shop.Extensions.SessionExtensions;
 
 namespace Shop.Controllers
 {
     public class UsersController : Controller
     {
         private readonly ShopContext _context;
-        private const string _userKey = "user";
 
         private User? _user
         {
             get
             {
-                int? userId = HttpContext.Session.GetInt32(_userKey);
+                int? userId = HttpContext.Session.GetInt32(SessionExtensions.UserIdKey);
                 return userId is null ? null : _context.Users.First(user => user.Id == userId);
             }
         }
@@ -25,12 +26,13 @@ namespace Shop.Controllers
             _context = context;
         }
 
+        public IActionResult Index()
+        {
+            return RedirectToAction(nameof(Index), controllerName: "Home");
+        }
+        [UserLogindedFilter]
         public IActionResult Details()
         {
-            if (_user is null)
-            {
-                return RedirectToAction(nameof(Login));
-            }
             return View(_user);
         }
 
@@ -47,8 +49,11 @@ namespace Shop.Controllers
             {
                 return View();
             }
-            HttpContext.Session.SetInt32(_userKey, user.Id);
-            HttpContext.Session.SetString("userName", user.Name);
+
+            HttpContext.Session.SetInt32(SessionExtensions.UserIdKey, user.Id);
+            HttpContext.Session.SetString(SessionExtensions.UserNameKey, user.Name);
+            HttpContext.Session.SetString(SessionExtensions.UserAdminKey, user.IsAdmin.ToString());
+
             return RedirectToAction(nameof(Index), controllerName: "Home");
         }
 
@@ -57,8 +62,7 @@ namespace Shop.Controllers
             return View();
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Register([Bind("Name, Password, ConfirmPassword,Email,Phone")] UserViewModel userModel)
         {
             if (ModelState.IsValid)
@@ -69,6 +73,31 @@ namespace Shop.Controllers
                 return RedirectToAction(nameof(Index), controllerName: "Home");
             }
             return View(userModel);
+        }
+
+        [UserLogindedFilter]
+        public IActionResult Edit()
+        {
+            return View(_user);
+        }
+
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction(nameof(Index), controllerName: "Home");
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit([Bind("Name,Email,Phone,Password")] User user)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Update(user);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Details));
+            }
+            return View(user);
+
         }
     }
 }
